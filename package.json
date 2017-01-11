@@ -1,0 +1,81 @@
+{
+  "name": "@groupby/experiment-manager",
+  "version": "1.0.9",
+  "private": true,
+  "main": "index.js",
+  "engines": {
+    "node": ">=6"
+  },
+  "scripts": {
+    "postinstall": "cd ui && npm install",
+    "test": "gulp test && mocha tests/**/*.spec.mocha.js",
+    "coverage:codacy": "cat ./coverage/lcov.info | codacy-coverage",
+    "lint": "gulp lint",
+    "license": "node licenseChecker.js"
+  },
+  "precommit": [
+    "lint",
+    "license"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/groupby/experiment-manager.git"
+  },
+  "author": "Eric Hacke",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
+    "chance": "^1.0.4",
+    "codacy-coverage": "^2.0.0",
+    "commander": "^2.9.0",
+    "csv": "^1.1.0",
+    "decache": "^4.1.0",
+    "eslint-plugin-no-only-tests": "^1.1.0",
+    "gb-license-check": "^1.0.1",
+    "gulp": "^3.9.1",
+    "gulp-eslint": "^3.0.1",
+    "gulp-if": "^2.0.2",
+    "gulp-istanbul": "^1.1.1",
+    "gulp-mocha": "^3.0.1",
+    "istanbul": "^0.4.3",
+    "nock": "^9.0.2",
+    "pre-commit": "^1.2.2",
+    "require-from-string": "^1.2.1",
+    "supertest": "^2.0.1",
+    "supertest-as-promised": "^4.0.2"
+  },
+  "dependencies": {
+    "@groupby/common": "^4.3.0",
+    "almost-equal": "^1.1.0",
+    "bluebird": "^3.3.5",
+    "body-parser": "^1.15.1",
+    "bodybuilder": "^1.22.0",
+    "bunyan": "^1.8.4",
+    "bunyan-prettystream": "^0.1.3",
+    "chai-spies": "^0.7.1",
+    "compression": "^1.6.2",
+    "errorhandler": "^1.4.3",
+    "es-mapping-to-schema": "^3.3.3",
+    "express": "^4.13.4",
+    "express-bunyan-logger": "^1.2.0",
+    "hash-code": "1.0.1",
+    "http-status": "^0.2.3",
+    "lodash": "^4.16.6",
+    "lodash.get": "^4.4.2",
+    "lodash.has": "^4.5.2",
+    "method-override": "^2.3.5",
+    "mocha": "^3.2.0",
+    "moment": "^2.15.2",
+    "murmurhash": "0.0.2",
+    "node-cache": "^4.1.0",
+    "omit-empty": "^0.4.1",
+    "request": "^2.79.0",
+    "request-promise": "^4.1.1",
+    "schema-inspector": "^1.6.8",
+    "spdx-correct": "^1.0.2",
+    "stringify-object": "3.0.0",
+    "uuid": "^3.0.1",
+    "webpack": "^1.13.3"
+  }
+}
