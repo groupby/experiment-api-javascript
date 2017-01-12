@@ -16,7 +16,6 @@ const generateBucketFractions = (bucketPercentages) => {
   }, []);
 };
 
-
 const placeInBucket = (hashValue, bucketThresholds) => {
   let bucketId = NO_BUCKET;
   for (let index = 0; index < bucketThresholds.length; index++) {
@@ -29,45 +28,51 @@ const placeInBucket = (hashValue, bucketThresholds) => {
   return NO_BUCKET;
 };
 
-
 const generateBucketThresholds = (offset, bucketFractions, trafficAllocation, maxValue) => {
   const thresholdFractions = bucketFractions.map((value) => (value * trafficAllocation + offset) * maxValue / 100);
   thresholdFractions.unshift(offset / 100);
   return thresholdFractions;
 };
 
-const getBucketId = (string, bucketingSpec) => {
-  
+const getBucketId = (hashString, bucketConfiguration) => {
 
-  const {trafficAllocationOffset, trafficAllocation} = bucketingSpec;
-
-  if (typeof bucketingSpec !== 'object') {
-    throw new Error('bucketingSpec must be an object');
+  if (!hashString || typeof hashString !== 'string') {
+    throw new Error('hashString must be a string');
   }
 
-  if (!Array.isArray(bucketingSpec.bucketPercentages) || bucketingSpec.bucketPercentages.length < 2) {
-    throw new Error('bucketingSpec.bucketPercentages must be an array of at least 2');
+  if (!bucketConfiguration || typeof bucketConfiguration !== 'object') {
+    throw new Error('bucketConfiguration must be an object');
   }
 
-  bucketingSpec.bucketPercentages.map((bucket) => {
+  const {trafficAllocationOffset, trafficAllocation} = bucketConfiguration;
+
+  if (!Array.isArray(bucketConfiguration.bucketPercentages) || bucketConfiguration.bucketPercentages.length < 2) {
+    throw new Error('bucketConfiguration.bucketPercentages must be an array of at least 2');
+  }
+
+  bucketConfiguration.bucketPercentages.map((bucket) => {
     if (typeof bucket !== 'number') {
-      throw new Error('bucketingSpec.bucketPercentages must be an array of numbers');
+      throw new Error('bucketConfiguration.bucketPercentages must be an array of numbers');
     }
   });
 
-  if (typeof trafficAllocation !== 'number') {
-    throw new Error('bucketingSpec.trafficAllocation must be a number');
+  if (!trafficAllocation || typeof trafficAllocation !== 'number' || trafficAllocation <= 0 || trafficAllocation > 100) {
+    throw new Error('bucketConfiguration.trafficAllocation must be a number greater than 0 and less than 100');
+  }
+
+  if (!trafficAllocationOffset && trafficAllocationOffset !== 0 || typeof trafficAllocationOffset !== 'number' || trafficAllocationOffset < 0 || trafficAllocationOffset > 100) {
+    throw new Error('bucketConfiguration.trafficAllocation must be a number between 0 and 100');
   }
 
   if (trafficAllocationOffset + trafficAllocation > 100) {
-    throw new Error('The sum of bucketingSpec.trafficAllocation and bucketingSpec.trafficAllocationOffset must be less than or equal to 100.');
+    throw new Error('The sum of bucketConfiguration.trafficAllocation and bucketConfiguration.trafficAllocationOffset must be less than or equal to 100');
   }
 
-  const bucketFractions = generateBucketFractions(bucketingSpec.bucketPercentages);
+  const bucketFractions = generateBucketFractions(bucketConfiguration.bucketPercentages);
 
   const bucketThresholds = generateBucketThresholds(trafficAllocationOffset, bucketFractions, trafficAllocation, MAX_HASH_VALUE);
 
-  const hashValue = murmurhash.v3(string, MURMUR_SEED);
+  const hashValue = murmurhash.v3(hashString, MURMUR_SEED);
 
   return placeInBucket(hashValue, bucketThresholds);
 };

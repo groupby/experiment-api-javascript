@@ -10,12 +10,12 @@ const _       = require('lodash');
 const csvParsePromise   = Promise.promisify(csv.parse);
 const fsReadFilePromise = Promise.promisify(fs.readFile);
 
-const testStringFilePath                = '../resources/testStrings.csv';
-const expectedBucketsFilePath2          = '../resources/expectedBuckets.csv';
-const expectedBucketsWithOffsetFilePath = '../resources/expectedBuckets15Offset.csv';
-const BucketConfiguration = require('../../trafficHashSplitter/models/bucketConfiguration');
+const testStringFilePath                = '../../resources/testStrings.csv';
+const expectedBucketsFilePath2          = '../../resources/expectedBuckets.csv';
+const expectedBucketsWithOffsetFilePath = '../../resources/expectedBuckets15Offset.csv';
+const BucketConfiguration = require('../../../trafficHashSplitter/models/bucketConfiguration');
 
-const bucket = require('../../trafficHashSplitter/lib/murmurBucketId');
+const bucket = require('../../../trafficHashSplitter/lib/murmurBucketId');
 
 describe('bucketing function', () => {
 
@@ -49,6 +49,94 @@ describe('bucketing function', () => {
     generatedBucketThresholds.map((value, index) => {
       expect(value).to.be.closeTo(expectedThreshold[index], 0.0001);
     });
+  });
+
+  it('throws if bucketingSpec is null', () => {
+    expect(() => bucket('testString', null)).to.throw('bucketConfiguration must be an object');
+  });
+
+  it('throws if bucketingSpec is undefined', () => {
+    expect(() => bucket('testString')).to.throw('bucketConfiguration must be an object');
+  });
+
+  it('throws if bucketingSpec is not object', () => {
+    expect(() => bucket('testString', 'notAnObject')).to.throw('bucketConfiguration must be an object');
+  });
+
+  it('throws if hashString is null', () => {
+    expect(() => bucket(null, {})).to.throw('hashString must be a string');
+  });
+
+  it('throws if hashString is undefined', () => {
+    expect(() => bucket(undefined, {})).to.throw('hashString must be a string');
+  });
+
+  it('throws if hashString is not object', () => {
+    expect(() => bucket(9, {})).to.throw('hashString must be a string');
+  });
+
+  it('throws if bucketPercentages is not an array', () => {
+    expect(() => bucket('hashString', {
+      bucketPercentages: null,
+      trafficAllocation: 100,
+      trafficAllocationOffset: 0
+    })).to.throw('bucketConfiguration.bucketPercentages must be an array of at least 2');
+  });
+
+  it('throws if bucketPercentages is array of less than length 2', () => {
+    expect(() => bucket('hashString', {
+      bucketPercentages: [1],
+      trafficAllocation: 100,
+      trafficAllocationOffset: 0
+    })).to.throw('bucketConfiguration.bucketPercentages must be an array of at least 2');
+  });
+
+  it('throws if bucketPercentages contains non-numbers', () => {
+    expect(() => bucket('hashString', {
+      bucketPercentages: [1, 'notANum'],
+      trafficAllocation: 100,
+      trafficAllocationOffset: 0
+    })).to.throw('bucketConfiguration.bucketPercentages must be an array of numbers');
+  });
+
+  it('throws if trafficAllocation is null', () => {
+    expect(() => bucket('hashString', {
+      bucketPercentages: [1, 99],
+      trafficAllocation: null,
+      trafficAllocationOffset: 0
+    })).to.throw('bucketConfiguration.trafficAllocation must be a number greater than 0 and less than 100');
+  });
+
+  it('throws if trafficAllocation is over 100', () => {
+    expect(() => bucket('hashString', {
+      bucketPercentages: [1, 99],
+      trafficAllocation: 110,
+      trafficAllocationOffset: 0
+    })).to.throw('bucketConfiguration.trafficAllocation must be a number greater than 0 and less than 100');
+  });
+
+  it('throws if trafficAllocation is 0', () => {
+    expect(() => bucket('hashString', {
+      bucketPercentages: [1, 99],
+      trafficAllocation: 0,
+      trafficAllocationOffset: 0
+    })).to.throw('bucketConfiguration.trafficAllocation must be a number greater than 0 and less than 100');
+  });
+
+  it('throws if trafficAllocationOffset is negative', () => {
+    expect(() => bucket('hashString', {
+      bucketPercentages: [1, 99],
+      trafficAllocation: 1,
+      trafficAllocationOffset: -1
+    })).to.throw('bucketConfiguration.trafficAllocation must be a number between 0 and 100');
+  });
+
+  it('throws if trafficAllocationOffset and trafficAllocation add to greater than 100', () => {
+    expect(() => bucket('hashString', {
+      bucketPercentages: [1, 99],
+      trafficAllocation: 60,
+      trafficAllocationOffset: 50
+    })).to.throw('The sum of bucketConfiguration.trafficAllocation and bucketConfiguration.trafficAllocationOffset must be less than or equal to 100');
   });
 
   it('returns -1 if hash lower than smallest threshold', () => {
