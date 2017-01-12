@@ -17,7 +17,7 @@ const BucketConfiguration = require('../../../trafficHashSplitter/models/bucketC
 
 const bucket = require('../../../trafficHashSplitter/lib/murmurBucketId');
 
-describe('bucketing function', () => {
+describe('Bucketing function', () => {
 
   it('returns the appropriate fractions from bucket percentages', () => {
     const bucketPercentages = [
@@ -52,31 +52,31 @@ describe('bucketing function', () => {
   });
 
   it('throws if bucketingSpec is null', () => {
-    expect(() => bucket('testString', null)).to.throw('bucketConfiguration must be an object');
+    expect(() => bucket.getBucketFromString('testString', null)).to.throw('bucketConfiguration must be an object');
   });
 
   it('throws if bucketingSpec is undefined', () => {
-    expect(() => bucket('testString')).to.throw('bucketConfiguration must be an object');
+    expect(() => bucket.getBucketFromString('testString')).to.throw('bucketConfiguration must be an object');
   });
 
   it('throws if bucketingSpec is not object', () => {
-    expect(() => bucket('testString', 'notAnObject')).to.throw('bucketConfiguration must be an object');
+    expect(() => bucket.getBucketFromString('testString', 'notAnObject')).to.throw('bucketConfiguration must be an object');
   });
 
   it('throws if hashString is null', () => {
-    expect(() => bucket(null, {})).to.throw('hashString must be a string');
+    expect(() => bucket.getBucketFromString(null, {})).to.throw('hashString must be a string');
   });
 
   it('throws if hashString is undefined', () => {
-    expect(() => bucket(undefined, {})).to.throw('hashString must be a string');
+    expect(() => bucket.getBucketFromString(undefined, {})).to.throw('hashString must be a string');
   });
 
   it('throws if hashString is not object', () => {
-    expect(() => bucket(9, {})).to.throw('hashString must be a string');
+    expect(() => bucket.getBucketFromString(9, {})).to.throw('hashString must be a string');
   });
 
   it('throws if bucketPercentages is not an array', () => {
-    expect(() => bucket('hashString', {
+    expect(() => bucket.getBucketFromString('hashString', {
       bucketPercentages: null,
       trafficAllocation: 100,
       trafficAllocationOffset: 0
@@ -84,7 +84,7 @@ describe('bucketing function', () => {
   });
 
   it('throws if bucketPercentages is array of less than length 2', () => {
-    expect(() => bucket('hashString', {
+    expect(() => bucket.getBucketFromString('hashString', {
       bucketPercentages: [1],
       trafficAllocation: 100,
       trafficAllocationOffset: 0
@@ -92,7 +92,7 @@ describe('bucketing function', () => {
   });
 
   it('throws if bucketPercentages contains non-numbers', () => {
-    expect(() => bucket('hashString', {
+    expect(() => bucket.getBucketFromString('hashString', {
       bucketPercentages: [1, 'notANum'],
       trafficAllocation: 100,
       trafficAllocationOffset: 0
@@ -100,7 +100,7 @@ describe('bucketing function', () => {
   });
 
   it('throws if trafficAllocation is null', () => {
-    expect(() => bucket('hashString', {
+    expect(() => bucket.getBucketFromString('hashString', {
       bucketPercentages: [1, 99],
       trafficAllocation: null,
       trafficAllocationOffset: 0
@@ -108,7 +108,7 @@ describe('bucketing function', () => {
   });
 
   it('throws if trafficAllocation is over 100', () => {
-    expect(() => bucket('hashString', {
+    expect(() => bucket.getBucketFromString('hashString', {
       bucketPercentages: [1, 99],
       trafficAllocation: 110,
       trafficAllocationOffset: 0
@@ -116,7 +116,7 @@ describe('bucketing function', () => {
   });
 
   it('throws if trafficAllocation is 0', () => {
-    expect(() => bucket('hashString', {
+    expect(() => bucket.getBucketFromString('hashString', {
       bucketPercentages: [1, 99],
       trafficAllocation: 0,
       trafficAllocationOffset: 0
@@ -124,7 +124,7 @@ describe('bucketing function', () => {
   });
 
   it('throws if trafficAllocationOffset is negative', () => {
-    expect(() => bucket('hashString', {
+    expect(() => bucket.getBucketFromString('hashString', {
       bucketPercentages: [1, 99],
       trafficAllocation: 1,
       trafficAllocationOffset: -1
@@ -132,7 +132,7 @@ describe('bucketing function', () => {
   });
 
   it('throws if trafficAllocationOffset and trafficAllocation add to greater than 100', () => {
-    expect(() => bucket('hashString', {
+    expect(() => bucket.getBucketFromString('hashString', {
       bucketPercentages: [1, 99],
       trafficAllocation: 60,
       trafficAllocationOffset: 50
@@ -182,7 +182,7 @@ describe('bucketing function', () => {
     fsReadFilePromise(path.join(__dirname, testStringFilePath), 'utf-8')
     .then(csvParsePromise)
     .then(_.flatten)
-    .then((strings) => strings.map((string) => bucket(string, bucketSpec)).map((value) => value === null ? -1 : value))
+    .then((strings) => strings.map((string) => bucket.getBucketFromString(string, bucketSpec)).map((value) => value === null ? -1 : value))
     .then((results) => {
       return fsReadFilePromise(path.join(__dirname, expectedBucketsFilePath2), 'utf-8')
       .then((fileContents) => csvParsePromise(fileContents, {auto_parse: true}))
@@ -210,7 +210,7 @@ describe('bucketing function', () => {
     fsReadFilePromise(path.join(__dirname, testStringFilePath), 'utf-8')
     .then(csvParsePromise)
     .then(_.flatten)
-    .then((strings) => strings.map((string) => bucket(string, bucketSpec)).map((value) => value === null ? -1 : value))
+    .then((strings) => strings.map((string) => bucket.getBucketFromString(string, bucketSpec)).map((value) => value === null ? -1 : value))
     .then((results) => fsReadFilePromise(path.join(__dirname, expectedBucketsWithOffsetFilePath), 'utf-8')
     .then((fileContents) => csvParsePromise(fileContents, {auto_parse: true}))
     .then(_.flatten)

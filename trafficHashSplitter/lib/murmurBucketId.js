@@ -34,7 +34,7 @@ const generateBucketThresholds = (offset, bucketFractions, trafficAllocation, ma
   return thresholdFractions;
 };
 
-const getBucketId = (hashString, bucketConfiguration) => {
+const getBucketFromString = (hashString, bucketConfiguration) => {
 
   if (!hashString || typeof hashString !== 'string') {
     throw new Error('hashString must be a string');
@@ -77,7 +77,7 @@ const getBucketId = (hashString, bucketConfiguration) => {
   return placeInBucket(hashValue, bucketThresholds);
 };
 
-module.exports                          = getBucketId;
+module.exports.getBucketFromString      = getBucketFromString;
 module.exports.generateBucketFractions  = generateBucketFractions;
 module.exports.generateBucketThresholds = generateBucketThresholds;
 module.exports.placeInBucket            = placeInBucket;
