@@ -1,4 +1,4 @@
-const utils       = require('@groupby/common/utils');
+const utils       = require('../../utils');
 const inspector   = require('schema-inspector');
 const _           = require('lodash');
 const almostEqual       = require('almost-equal');
