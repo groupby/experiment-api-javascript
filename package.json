@@ -1,5 +1,5 @@
 {
-  "name": "@groupby/experiment-api-javascript",
+  "name": "experiment-api-javascript",
   "version": "0.0.1",
   "private": true,
   "main": "index.js",
