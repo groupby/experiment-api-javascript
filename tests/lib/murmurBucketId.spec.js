@@ -13,9 +13,9 @@ const fsReadFilePromise = Promise.promisify(fs.readFile);
 const testStringFilePath                = '../resources/testStrings.csv';
 const expectedBucketsFilePath2          = '../resources/expectedBuckets.csv';
 const expectedBucketsWithOffsetFilePath = '../resources/expectedBuckets15Offset.csv';
-const BucketConfiguration = require('../../models/bucketConfiguration');
+const BucketConfiguration = require('../../trafficHashSplitter/models/bucketConfiguration');
 
-const bucket = require('../../lib/murmurBucketId');
+const bucket = require('../../trafficHashSplitter/lib/murmurBucketId');
 
 describe('bucketing function', () => {
 

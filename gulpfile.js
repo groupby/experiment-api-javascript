@@ -16,7 +16,7 @@ gulp.task('test:dirty', () => {
 });
 
 gulp.task('pre-test', () => {
-  return gulp.src('app/**/*.js')
+  return gulp.src('trafficHashSplitter/**/*.js')
     .pipe(istanbul())
     .pipe(istanbul.hookRequire());
 });

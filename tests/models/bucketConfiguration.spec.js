@@ -1,7 +1,7 @@
 const chai                = require('chai');
 const expect              = chai.expect;
 const _                   = require('lodash');
-const BucketConfiguration = require('../../models/bucketConfiguration');
+const BucketConfiguration = require('../../trafficHashSplitter/models/bucketConfiguration');
 
 describe('Bucket configuration model tests', () => {
   it('creates an experiment with the correct parameters', () => {
