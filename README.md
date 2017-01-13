@@ -3,5 +3,8 @@
 ## Install
 
 ```bash
-npm install 
+npm install experiement-api
 ```
+
+## Use
+experimentApi.bucke
