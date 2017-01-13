@@ -2,6 +2,8 @@ machine:
   node:
     version: 7
 dependencies:
+  pre:
+    - npm install --global gulp-cli
   override:
     - npm install --silent
 test:
