@@ -35,7 +35,6 @@ const generateBucketThresholds = (offset, bucketFractions, trafficAllocation, ma
 };
 
 const getBucketFromString = (hashString, bucketConfiguration) => {
-
   if (!hashString || typeof hashString !== 'string') {
     throw new Error('hashString must be a string');
   }

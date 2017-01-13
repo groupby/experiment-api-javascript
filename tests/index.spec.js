@@ -13,7 +13,7 @@ const fsReadFilePromise = Promise.promisify(fs.readFile);
 const testStringFilePath                = './resources/testStrings.csv';
 const expectedBucketsFilePath2          = './resources/expectedBuckets.csv';
 const expectedBucketsWithOffsetFilePath = './resources/expectedBuckets15Offset.csv';
-const BucketConfiguration = require('../trafficHashSplitter/models/bucketConfiguration');
+const BucketConfiguration = require('../app/models/bucketConfiguration');
 
 
 

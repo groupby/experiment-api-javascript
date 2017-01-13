@@ -1,7 +1,6 @@
 {
-  "name": "experiment-api-javascript",
+  "name": "experiment-api",
   "version": "0.0.1",
-  "private": true,
   "main": "index.js",
   "engines": {
     "node": ">=6"
@@ -34,16 +33,13 @@
     "gulp-istanbul": "^1.1.1",
     "gulp-mocha": "^3.0.1",
     "istanbul": "^0.4.3",
+    "mocha": "^3.2.0",
     "pre-commit": "^1.2.2"
   },
   "dependencies": {
-    "@groupby/common": "^4.3.0",
     "almost-equal": "^1.1.0",
     "bluebird": "^3.3.5",
     "lodash": "^4.16.6",
-    "lodash.get": "^4.4.2",
-    "lodash.has": "^4.5.2",
-    "mocha": "^3.2.0",
     "murmurhash": "0.0.2",
     "schema-inspector": "^1.6.8"
   }

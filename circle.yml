@@ -1,0 +1,17 @@
+machine:
+  node:
+    version: 7
+dependencies:
+  override:
+    - npm install --silent
+test:
+  override:
+    - gulp test
+    - npm run coverage:codacy
+deployment:
+  hub-and-npm:
+    tag: /v[0-9]+(\.[0-9]+)*/
+    owner: groupby
+    commands:
+      - echo "//registry.npmjs.org/:_authToken=${NPM_API_KEY}" > ~/.npmrc
+      - npm publish

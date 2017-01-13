@@ -13,12 +13,11 @@ const fsReadFilePromise = Promise.promisify(fs.readFile);
 const testStringFilePath                = '../../resources/testStrings.csv';
 const expectedBucketsFilePath2          = '../../resources/expectedBuckets.csv';
 const expectedBucketsWithOffsetFilePath = '../../resources/expectedBuckets15Offset.csv';
-const BucketConfiguration = require('../../../trafficHashSplitter/models/bucketConfiguration');
+const BucketConfiguration = require('../../../app/models/bucketConfiguration');
 
-const bucket = require('../../../trafficHashSplitter/lib/murmurBucketId');
+const bucket = require('../../../app/lib/murmurBucketId');
 
 describe('Bucketing function', () => {
-
   it('returns the appropriate fractions from bucket percentages', () => {
     const bucketPercentages = [
       25,

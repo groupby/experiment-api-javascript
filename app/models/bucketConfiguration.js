@@ -1,19 +1,19 @@
 const utils       = require('../../utils');
 const inspector   = require('schema-inspector');
 const _           = require('lodash');
-const almostEqual       = require('almost-equal');
+const almostEqual = require('almost-equal');
 
 const SCHEMAS = {
   sanitization: {
     type:       'object',
     properties: {
-      bucketPercentage: {
-        type: 'array',
+      bucketPercentage:        {
+        type:  'array',
         items: {
           type: 'integer'
         }
       },
-      trafficAllocation: {
+      trafficAllocation:       {
         type: 'integer'
       },
       trafficAllocationOffset: {
@@ -25,22 +25,22 @@ const SCHEMAS = {
     type:       'object',
     strict:     false,
     properties: {
-      bucketPercentages: {
-        type: 'array',
+      bucketPercentages:       {
+        type:      'array',
         minLength: 2,
-        items: {
+        items:     {
           type: 'integer'
         }
       },
-      trafficAllocation: {
+      trafficAllocation:       {
         type: 'integer',
-        gt: 0,
-        lte: 100
+        gt:   0,
+        lte:  100
       },
       trafficAllocationOffset: {
         type: 'integer',
-        gte: 0,
-        lte: 100
+        gte:  0,
+        lte:  100
       }
     }
   }

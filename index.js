@@ -1,3 +1,3 @@
 module.exports = {
-  TrafficHashSplitter: require('./trafficHashSplitter/lib/murmurBucketId')
+  TrafficHashSplitter: require('./app/lib/murmurBucketId')
 };
