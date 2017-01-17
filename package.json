@@ -2,6 +2,7 @@
   "name": "experiment-api",
   "version": "1.0.0",
   "main": "index.js",
+  "description": "GroupBy Experiment API client",
   "engines": {
     "node": ">=6"
   },
