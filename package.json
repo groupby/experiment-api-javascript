@@ -23,7 +23,7 @@
     "type": "git",
     "url": "git+https://github.com/groupby/experiment-api-javascript.git"
   },
-  "author": "Tahir Wasim",
+  "author": "GroupBy",
   "license": "UNLICENSED",
   "devDependencies": {
     "babel-core": "^6.21.0",
