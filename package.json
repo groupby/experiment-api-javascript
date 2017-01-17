@@ -9,11 +9,15 @@
     "test": "gulp test",
     "coverage:codacy": "cat ./coverage/lcov.info | codacy-coverage",
     "lint": "gulp lint",
-    "license": "node licenseChecker.js"
+    "license": "node licenseChecker.js",
+    "build": "gulp build",
+    "add": "git add -A"
   },
   "precommit": [
     "lint",
-    "license"
+    "license",
+    "build",
+    "add"
   ],
   "repository": {
     "type": "git",
