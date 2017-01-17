@@ -61,7 +61,7 @@ gulp.task('test:dirty', () => {
     .pipe(mocha({reporter: 'spec'}));
 });
 
-gulp.task('pre-test', () => {
+gulp.task('pre-test', ['build:bin'], () => {
   return gulp.src('lib/**/*.js')
     .pipe(istanbul())
     .pipe(istanbul.hookRequire());

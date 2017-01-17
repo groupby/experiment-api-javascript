@@ -10,7 +10,7 @@
     "coverage:codacy": "cat ./coverage/lcov.info | codacy-coverage",
     "lint": "gulp lint",
     "license": "node licenseChecker.js",
-    "build": "gulp build",
+    "build": "gulp build:bin",
     "add": "git add -A"
   },
   "precommit": [
