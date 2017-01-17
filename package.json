@@ -9,19 +9,27 @@
     "test": "gulp test",
     "coverage:codacy": "cat ./coverage/lcov.info | codacy-coverage",
     "lint": "gulp lint",
-    "license": "node licenseChecker.js"
+    "license": "node licenseChecker.js",
+    "build": "gulp build:bin",
+    "add": "git add -A"
   },
   "precommit": [
     "lint",
-    "license"
+    "license",
+    "build",
+    "add"
   ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/groupby/experiment-api-javascript.git"
   },
-  "author": "Tahir Wasim",
-  "license": "UNLICENSED",
+  "author": "GroupBy",
+  "license": "MIT",
   "devDependencies": {
+    "babel-core": "^6.21.0",
+    "babel-loader": "^6.2.10",
+    "babel-preset-latest": "^6.16.0",
+    "bluebird": "^3.3.5",
     "chai": "^3.5.0",
     "codacy-coverage": "^2.0.0",
     "csv": "^1.1.0",
@@ -33,15 +41,14 @@
     "gulp-istanbul": "^1.1.1",
     "gulp-mocha": "^3.0.1",
     "istanbul": "^0.4.3",
+    "lodash": "^4.17.4",
     "mocha": "^3.2.0",
-    "pre-commit": "^1.2.2"
+    "pre-commit": "^1.2.2",
+    "webpack": "^1.14.0",
+    "webpack-node-externals": "^1.5.4",
+    "webpack-stream": "^3.2.0"
   },
   "dependencies": {
-    "almost-equal": "^1.1.0",
-    "bluebird": "^3.3.5",
-    "lodash": "^4.16.6",
-    "murmurhash": "0.0.2",
-    "schema-inspector": "^1.6.8"
+    "murmurhash": "0.0.2"
   }
 }
-

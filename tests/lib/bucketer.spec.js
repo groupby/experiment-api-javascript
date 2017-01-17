@@ -10,12 +10,11 @@ const _       = require('lodash');
 const csvParsePromise   = Promise.promisify(csv.parse);
 const fsReadFilePromise = Promise.promisify(fs.readFile);
 
-const testStringFilePath                = '../../resources/testStrings.csv';
-const expectedBucketsFilePath2          = '../../resources/expectedBuckets.csv';
-const expectedBucketsWithOffsetFilePath = '../../resources/expectedBuckets15Offset.csv';
-const BucketConfiguration = require('../../../app/models/bucketConfiguration');
+const testStringFilePath                = '../resources/testStrings.csv';
+const expectedBucketsFilePath2          = '../resources/expectedBuckets.csv';
+const expectedBucketsWithOffsetFilePath = '../resources/expectedBuckets15Offset.csv';
 
-const bucket = require('../../../app/lib/murmurBucketId');
+const Bucketer = require('../../lib/bucketer');
 
 describe('Bucketing function', () => {
   it('returns the appropriate fractions from bucket percentages', () => {
@@ -28,7 +27,7 @@ describe('Bucketing function', () => {
 
     const expectedFractions = [0.25, 0.55, 0.85, 1];
 
-    const generatedBucketFractions = bucket.generateBucketFractions(bucketPercentages);
+    const generatedBucketFractions = Bucketer.generateBucketFractions(bucketPercentages);
     expect(generatedBucketFractions.length).to.eql(expectedFractions.length);
     generatedBucketFractions.map((value, index) => {
       expect(value).to.be.closeTo(expectedFractions[index], 0.0001);
@@ -42,7 +41,7 @@ describe('Bucketing function', () => {
     const maxValue          = 1;
     const expectedThreshold = [0.2, 0.35, 0.5, 0.6, 0.7];
 
-    const generatedBucketThresholds = bucket.generateBucketThresholds(offset, bucketFractions, trafficAllocation, maxValue);
+    const generatedBucketThresholds = Bucketer.generateBucketThresholds(offset, bucketFractions, trafficAllocation, maxValue);
 
     expect(generatedBucketThresholds.length).to.equal(expectedThreshold.length);
     generatedBucketThresholds.map((value, index) => {
@@ -51,31 +50,46 @@ describe('Bucketing function', () => {
   });
 
   it('throws if bucketingSpec is null', () => {
-    expect(() => bucket.getBucketFromString('testString', null)).to.throw('bucketConfiguration must be an object');
+    expect(() => Bucketer(null)).to.throw('bucketConfiguration must be an object');
   });
 
   it('throws if bucketingSpec is undefined', () => {
-    expect(() => bucket.getBucketFromString('testString')).to.throw('bucketConfiguration must be an object');
+    expect(() => Bucketer()).to.throw('bucketConfiguration must be an object');
   });
 
   it('throws if bucketingSpec is not object', () => {
-    expect(() => bucket.getBucketFromString('testString', 'notAnObject')).to.throw('bucketConfiguration must be an object');
+    expect(() => Bucketer('notAnObject')).to.throw('bucketConfiguration must be an object');
   });
 
   it('throws if hashString is null', () => {
-    expect(() => bucket.getBucketFromString(null, {})).to.throw('hashString must be a string');
+    const bucketer = new Bucketer({
+      bucketPercentages: [50,50],
+      trafficAllocation: 100,
+      trafficAllocationOffset: 0
+    });
+    expect(() => bucketer.getBucketId(null)).to.throw('hashString must be a string');
   });
 
   it('throws if hashString is undefined', () => {
-    expect(() => bucket.getBucketFromString(undefined, {})).to.throw('hashString must be a string');
+    const bucketer = new Bucketer({
+      bucketPercentages: [50,50],
+      trafficAllocation: 100,
+      trafficAllocationOffset: 0
+    });
+    expect(() => bucketer.getBucketId()).to.throw('hashString must be a string');
   });
 
-  it('throws if hashString is not object', () => {
-    expect(() => bucket.getBucketFromString(9, {})).to.throw('hashString must be a string');
+  it('throws if hashString is an object', () => {
+    const bucketer = new Bucketer({
+      bucketPercentages: [50,50],
+      trafficAllocation: 100,
+      trafficAllocationOffset: 0
+    });
+    expect(() => bucketer.getBucketId(9)).to.throw('hashString must be a string');
   });
 
   it('throws if bucketPercentages is not an array', () => {
-    expect(() => bucket.getBucketFromString('hashString', {
+    expect(() => Bucketer.validateBucketConfiguration({
       bucketPercentages: null,
       trafficAllocation: 100,
       trafficAllocationOffset: 0
@@ -83,7 +97,7 @@ describe('Bucketing function', () => {
   });
 
   it('throws if bucketPercentages is array of less than length 2', () => {
-    expect(() => bucket.getBucketFromString('hashString', {
+    expect(() => Bucketer.validateBucketConfiguration({
       bucketPercentages: [1],
       trafficAllocation: 100,
       trafficAllocationOffset: 0
@@ -91,15 +105,23 @@ describe('Bucketing function', () => {
   });
 
   it('throws if bucketPercentages contains non-numbers', () => {
-    expect(() => bucket.getBucketFromString('hashString', {
+    expect(() => Bucketer.validateBucketConfiguration({
       bucketPercentages: [1, 'notANum'],
       trafficAllocation: 100,
       trafficAllocationOffset: 0
     })).to.throw('bucketConfiguration.bucketPercentages must be an array of numbers');
   });
 
+  it('throws if bucketPercentages does not sum to 100', () => {
+    expect(() => Bucketer.validateBucketConfiguration({
+      bucketPercentages: [1, 2],
+      trafficAllocation: 100,
+      trafficAllocationOffset: 0
+    })).to.throw('bucketPercentages must sum to 100, instead sum to: 3');
+  });
+
   it('throws if trafficAllocation is null', () => {
-    expect(() => bucket.getBucketFromString('hashString', {
+    expect(() => Bucketer.validateBucketConfiguration({
       bucketPercentages: [1, 99],
       trafficAllocation: null,
       trafficAllocationOffset: 0
@@ -107,7 +129,7 @@ describe('Bucketing function', () => {
   });
 
   it('throws if trafficAllocation is over 100', () => {
-    expect(() => bucket.getBucketFromString('hashString', {
+    expect(() => Bucketer.validateBucketConfiguration({
       bucketPercentages: [1, 99],
       trafficAllocation: 110,
       trafficAllocationOffset: 0
@@ -115,7 +137,7 @@ describe('Bucketing function', () => {
   });
 
   it('throws if trafficAllocation is 0', () => {
-    expect(() => bucket.getBucketFromString('hashString', {
+    expect(() => Bucketer.validateBucketConfiguration({
       bucketPercentages: [1, 99],
       trafficAllocation: 0,
       trafficAllocationOffset: 0
@@ -123,7 +145,7 @@ describe('Bucketing function', () => {
   });
 
   it('throws if trafficAllocationOffset is negative', () => {
-    expect(() => bucket.getBucketFromString('hashString', {
+    expect(() => Bucketer.validateBucketConfiguration({
       bucketPercentages: [1, 99],
       trafficAllocation: 1,
       trafficAllocationOffset: -1
@@ -131,7 +153,7 @@ describe('Bucketing function', () => {
   });
 
   it('throws if trafficAllocationOffset and trafficAllocation add to greater than 100', () => {
-    expect(() => bucket.getBucketFromString('hashString', {
+    expect(() => Bucketer.validateBucketConfiguration({
       bucketPercentages: [1, 99],
       trafficAllocation: 60,
       trafficAllocationOffset: 50
@@ -142,32 +164,32 @@ describe('Bucketing function', () => {
     const bucketThresholds = [0.2, 0.35, 0.5, 0.6, 0.7];
     const hashValue        = 0.1;
 
-    expect(bucket.placeInBucket(hashValue, bucketThresholds)).to.eql(-1);
+    expect(Bucketer.placeInBucket(hashValue, bucketThresholds)).to.eql(-1);
   });
 
   it('returns 0 if hash between first and second threshold', () => {
     const bucketThresholds = [0.2, 0.35, 0.5, 0.6, 0.7];
     const hashValue        = 0.31;
 
-    expect(bucket.placeInBucket(hashValue, bucketThresholds)).to.eql(0);
+    expect(Bucketer.placeInBucket(hashValue, bucketThresholds)).to.eql(0);
   });
 
   it('returns 3 if hash between fourth and fifth threshold', () => {
     const bucketThresholds = [0.2, 0.35, 0.5, 0.6, 0.7];
     const hashValue        = 0.65;
 
-    expect(bucket.placeInBucket(hashValue, bucketThresholds)).to.eql(3);
+    expect(Bucketer.placeInBucket(hashValue, bucketThresholds)).to.eql(3);
   });
 
   it('returns -1 if hash higher than greatest threshold', () => {
     const bucketThresholds = [0.2, 0.35, 0.5, 0.6, 0.7];
     const hashValue        = 0.8;
 
-    expect(bucket.placeInBucket(hashValue, bucketThresholds)).to.eql(-1);
+    expect(Bucketer.placeInBucket(hashValue, bucketThresholds)).to.eql(-1);
   });
 
   it('buckets into expected buckets with 0 offset', (done) => {
-    const bucketSpec = new BucketConfiguration({
+    const bucketSpec = {
       trafficAllocation:       75,
       trafficAllocationOffset: 0,
       bucketPercentages:       [
@@ -176,12 +198,14 @@ describe('Bucketing function', () => {
         30,
         15
       ]
-    });
+    };
+
+    const bucketer = new Bucketer(bucketSpec);
 
     fsReadFilePromise(path.join(__dirname, testStringFilePath), 'utf-8')
     .then(csvParsePromise)
     .then(_.flatten)
-    .then((strings) => strings.map((string) => bucket.getBucketFromString(string, bucketSpec)).map((value) => value === null ? -1 : value))
+    .then((strings) => strings.map((string) => bucketer.getBucketId(string, bucketSpec)).map((value) => value === null ? -1 : value))
     .then((results) => {
       return fsReadFilePromise(path.join(__dirname, expectedBucketsFilePath2), 'utf-8')
       .then((fileContents) => csvParsePromise(fileContents, {auto_parse: true}))
@@ -195,7 +219,7 @@ describe('Bucketing function', () => {
   });
 
   it('buckets into expected buckets with 15 offset', (done) => {
-    const bucketSpec = new BucketConfiguration({
+    const bucketSpec = {
       trafficAllocation:       75,
       trafficAllocationOffset: 15,
       bucketPercentages:       [
@@ -204,12 +228,14 @@ describe('Bucketing function', () => {
         30,
         15
       ]
-    });
+    };
+
+    const bucketer = new Bucketer(bucketSpec);
 
     fsReadFilePromise(path.join(__dirname, testStringFilePath), 'utf-8')
     .then(csvParsePromise)
     .then(_.flatten)
-    .then((strings) => strings.map((string) => bucket.getBucketFromString(string, bucketSpec)).map((value) => value === null ? -1 : value))
+    .then((strings) => strings.map((string) => bucketer.getBucketId(string)).map((value) => value === null ? -1 : value))
     .then((results) => fsReadFilePromise(path.join(__dirname, expectedBucketsWithOffsetFilePath), 'utf-8')
     .then((fileContents) => csvParsePromise(fileContents, {auto_parse: true}))
     .then(_.flatten)
