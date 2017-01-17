@@ -1,3 +1,4 @@
+module.exports =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
   /******/ 	const installedModules = {};
@@ -129,6 +130,14 @@
 	      throw new Error('bucketConfiguration.bucketPercentages must be an array of numbers');
 	    }
 	  });
+
+	  const sumBucketPercentages = bucketConfiguration.bucketPercentages.reduce((acc, value) => {
+	    return acc + value;
+	  }, 0);
+
+	  if (Math.abs(sumBucketPercentages - 100) > 0.001) {
+	    throw new Error(`bucketPercentages must sum to 100, instead sum to: ${ sumBucketPercentages}`);
+	  }
 
 	  if (!trafficAllocation || typeof trafficAllocation !== 'number' || trafficAllocation <= 0 || trafficAllocation > 100) {
 	    throw new Error('bucketConfiguration.trafficAllocation must be a number greater than 0 and less than 100');

@@ -117,7 +117,7 @@ describe('Bucketing function', () => {
       bucketPercentages: [1, 2],
       trafficAllocation: 100,
       trafficAllocationOffset: 0
-    })).to.throw('bucketConfiguration.bucketPercentages must be an array of numbers');
+    })).to.throw('bucketPercentages must sum to 100, instead sum to: 3');
   });
 
   it('throws if trafficAllocation is null', () => {

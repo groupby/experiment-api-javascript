@@ -36,8 +36,11 @@ gulp.task('build:normal', () => gulp.src('lib/index.js')
 
 gulp.task('build:bin', () => gulp.src('lib/index.js')
   .pipe(webpackStream(Object.assign({}, webpackConfig, {
-    output: {filename: 'lib.js'},
-    target: 'node',
+    output:    {
+      filename:      'lib.js',
+      libraryTarget: 'commonjs2'
+    },
+    target:    'node',
     externals: [nodeExternals()]
   })))
   .pipe(gulp.dest('bin')));
@@ -59,7 +62,7 @@ gulp.task('test:dirty', () => {
 });
 
 gulp.task('pre-test', () => {
-  return gulp.src('app/**/*.js')
+  return gulp.src('lib/**/*.js')
     .pipe(istanbul())
     .pipe(istanbul.hookRequire());
 });
@@ -94,7 +97,7 @@ gulp.task('test:coverage', ['pre-test'], () => {
 
 const lint = () => {
   return gulp.src([
-    '**/*.js',
+    'lib/**/*.js',
     '!node_modules/**',
     '!coverage/**',
     '!ui/**'
