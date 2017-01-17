@@ -5,6 +5,49 @@ const eslint   = require('gulp-eslint');
 const istanbul = require('gulp-istanbul');
 const gulpIf   = require('gulp-if');
 
+const nodeExternals = require('webpack-node-externals');
+const path          = require('path');
+const webpack       = require('webpack');
+const webpackStream = require('webpack-stream');
+const packageJson   = require('./package.json');
+const webpackConfig = require('./webpack.config');
+// const exec          = require('gulp-exec');
+
+gulp.task('build:minify', () => {
+  const minConfig = Object.assign({}, webpackConfig, {
+    output:  {filename: `${packageJson.name }-${ packageJson.version }.min.js`},
+    plugins: [
+      new webpack.optimize.UglifyJsPlugin({
+        compress: {
+          warnings: false
+        }
+      })
+    ]
+  });
+
+  return gulp.src('lib/index.js')
+    .pipe(webpackStream(minConfig))
+    .pipe(gulp.dest('dist'));
+});
+
+gulp.task('build:normal', () => gulp.src('lib/index.js')
+  .pipe(webpackStream(webpackConfig))
+  .pipe(gulp.dest('dist')));
+
+gulp.task('build:bin', () => gulp.src('lib/index.js')
+  .pipe(webpackStream(Object.assign({}, webpackConfig, {
+    output: {filename: 'lib.js'},
+    target: 'node',
+    externals: [nodeExternals()]
+  })))
+  .pipe(gulp.dest('bin')));
+
+gulp.task('build', [
+  'build:bin',
+  'build:normal',
+  'build:minify'
+]);
+
 const isFixed = (file) => {
   // Has ESLint fixed the file contents?
   return file.eslint != null && file.eslint.fixed;
