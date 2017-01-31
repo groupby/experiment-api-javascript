@@ -1,5 +1,7 @@
 # experiment-api-javascript
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/groupby/experiment-api-javascript.svg)](https://greenkeeper.io/)
+
 ## Install
 
 ```bash
