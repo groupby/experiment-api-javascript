@@ -188,6 +188,26 @@ describe('Bucketing function', () => {
     expect(Bucketer.placeInBucket(hashValue, bucketThresholds)).to.eql(-1);
   });
 
+  it('converts bucket fractions into boundaries', () => {
+    const offset = 0; 
+    const bucketFractions = [0.25, 0.5, 0.75, 1]; //four buckets
+    const trafficAllocation = 80; 
+    const maxValue = 1000;
+    const expectedBoundaries = [0,200,400,600,800]; //800-1000 range is excluded
+
+    expect(Bucketer.generateBucketThresholds(offset, bucketFractions, trafficAllocation, maxValue)).to.eql(expectedBoundaries);
+  });
+
+  it('converts bucket fractions into boundaries, with an offset', () => {
+    const offset = 20; 
+    const bucketFractions = [0.25, 0.5, 0.75, 1]; //four buckets
+    const trafficAllocation = 80;
+    const maxValue = 1000;
+    const expectedBoundaries = [200,400,600,800,1000]; //0-200 range is excluded, because of offset
+
+    expect(Bucketer.generateBucketThresholds(offset, bucketFractions, trafficAllocation, maxValue)).to.eql(expectedBoundaries);
+  });
+
   it('buckets into expected buckets with 0 offset', (done) => {
     const bucketSpec = {
       trafficAllocation:       75,

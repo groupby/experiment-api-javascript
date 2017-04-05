@@ -70,6 +70,8 @@ module.exports =
 
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 	// Use https://github.com/sangupta/murmurhttps://github.com/sangupta/murmur for java
 	// Do not require large modules or those with many dependencies - will blow up
 	var murmurhash = __webpack_require__(3);
@@ -101,11 +103,11 @@ module.exports =
 	};
 
 	var generateBucketThresholds = function generateBucketThresholds(offset, bucketFractions, trafficAllocation, maxValue) {
-	  var thresholdFractions = bucketFractions.map(function (value) {
+	  //add initial threshold to create the boundaries of the buckets
+	  var bucketBoundaries = [0].concat(_toConsumableArray(bucketFractions));
+	  return bucketBoundaries.map(function (value) {
 	    return (value * trafficAllocation + offset) * maxValue / 100;
 	  });
-	  thresholdFractions.unshift(offset / 100);
-	  return thresholdFractions;
 	};
 
 	var validateBucketConfiguration = function validateBucketConfiguration(bucketConfiguration) {
