@@ -31,7 +31,7 @@
     "babel-loader": "^6.2.10",
     "babel-preset-latest": "^6.16.0",
     "bluebird": "^3.3.5",
-    "chai": "^3.5.0",
+    "chai": "^4.0.2",
     "codacy-coverage": "^2.0.0",
     "csv": "^1.1.0",
     "eslint-plugin-no-only-tests": "^1.1.0",
