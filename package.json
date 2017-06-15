@@ -37,7 +37,7 @@
     "eslint-plugin-no-only-tests": "^1.1.0",
     "gb-license-check": "^1.0.1",
     "gulp": "^3.9.1",
-    "gulp-eslint": "^3.0.1",
+    "gulp-eslint": "^4.0.0",
     "gulp-if": "^2.0.2",
     "gulp-istanbul": "^1.1.1",
     "gulp-mocha": "^3.0.1",
